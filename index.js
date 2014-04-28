@@ -5,9 +5,6 @@ module.exports = {
 
 	toObject : function(data){
 		var content = getContentIfFile(data);
-		if(content === false){
-			content = data;
-		}
 		if(!content || typeof content !== "string"){
 			throw new Error("invalid data");
 		}
@@ -32,9 +29,6 @@ module.exports = {
 
 	toArray : function(data){
 		var content = getContentIfFile(data);
-		if(content === false){
-			content = data;
-		}
 		if(!content || typeof content !== "string"){
 			throw new Error("invalid data");
 		}
@@ -54,9 +48,6 @@ module.exports = {
 
 	toCSV : function(data){
 		var content = getContentIfFile(data);
-		if(content === false){
-			content = data;
-		}
 		if(!content){
 			throw new Error("invalid data");
 		}
@@ -84,14 +75,90 @@ module.exports = {
 			textContent.unshift(headers);
 		}
 		return outputSave(textContent.join("\n")) ;
+	},
+
+	toColumnArray : function(data){
+		var content = getContentIfFile(data);
+		if(!content || typeof content !== "string"){
+			throw new Error("invalid data");
+		}
+		content = content.split(/[\n\r]+/ig);
+		if(!content.length){
+			throw new Error("invalid data");
+		}
+		var headers = content.shift().split(','),
+			hashData = {};
+		headers.forEach(function(item){
+			hashData[item] = [];
+		});
+		content.forEach(function(item){
+			if(item){
+				item = item.split(',');
+				item.forEach(function(val, index){
+					hashData[headers[index]].push(val);	
+				});
+			}
+		});
+		return outputSave(hashData);
+	},
+
+	toSchemaObject : function(data){
+		var content = getContentIfFile(data);
+		if(!content || typeof content !== "string"){
+			throw new Error("invalid data");
+		}
+		content = content.split(/[\n\r]+/ig);
+		if(!content.length){
+			throw new Error("invalid data");
+		}
+		var headers = content.shift().split(','),
+			hashData = [];
+
+		content.forEach(function(item){
+			if(item){
+				item = item.split(',');
+				var schemaObject = {};
+				item.forEach(function(val, index){
+					putDataInSchema(headers[index], val, schemaObject);
+				});
+				hashData.push(schemaObject);
+			}
+		});
+		return outputSave(hashData);
 	}
+}
+
+function putDataInSchema(header, item, schema){
+	var match = header.match(/\.|\[\]|-|\+/ig);
+	if(match){
+		if(match.indexOf('-') !== -1){
+			return true;
+		}else if(match.indexOf('.') !== -1){
+			var headParts = header.split('.');
+			var currentPoint = headParts.shift();
+			schema[currentPoint] = schema[currentPoint] || {};
+			putDataInSchema(headParts.join("."), item, schema[currentPoint]);
+		}else if(match.indexOf('[]') !== -1){
+			var headerName = header.replace(/\[\]/ig,"");
+			if(!schema[headerName]){
+				schema[headerName] = [];
+			}
+			schema[headerName].push(item);	
+		}else if(match.indexOf('+') !== -1){
+			var headerName = header.replace(/\+/ig,"");
+			schema[headerName] = Number(item);
+		}
+	}else{
+		schema[header] = item;
+	}
+	return schema ;
 }
 
 function getContentIfFile(filepath){
 	if (fs.existsSync(filepath)) {
         return fs.readFileSync(filepath, 'utf8');
     }
-    return false;
+    return filepath;
 }
 
 
