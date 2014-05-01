@@ -19,7 +19,7 @@ module.exports = {
 				item = item.split(',');
 				var hashItem = {};
 				headers.forEach(function(headerItem, index){
-					hashItem[headerItem] = item[index];
+					hashItem[headerItem] = item[index].replace(/"/g, '');
 				});
 				hashData.push(hashItem);
 			}
