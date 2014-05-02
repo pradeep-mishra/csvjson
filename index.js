@@ -9,9 +9,6 @@ module.exports = {
 			throw new Error("invalid data");
 		}
 		content = content.split(/[\n\r]+/ig);
-		if(!content.length){
-			throw new Error("invalid data");
-		}
 		var headers = content.shift().split(','),
 			hashData = [];
 		content.forEach(function(item){
@@ -19,7 +16,7 @@ module.exports = {
 				item = item.split(',');
 				var hashItem = {};
 				headers.forEach(function(headerItem, index){
-					hashItem[headerItem] = item[index].replace(/"/g, '');
+					hashItem[headerItem] = trimQuote(item[index]);
 				});
 				hashData.push(hashItem);
 			}
@@ -33,13 +30,12 @@ module.exports = {
 			throw new Error("invalid data");
 		}
 		content = content.split(/[\n\r]+/ig);
-		if(!content.length){
-			throw new Error("invalid data");
-		}
 		var arrayData = [];	
 		content.forEach(function(item){
 			if(item){
-				item = item.split(',');
+				item = item.split(',').map(function(cItem){
+					return trimQuote(cItem);
+				});
 				arrayData.push(item);
 			}
 		});
@@ -83,9 +79,6 @@ module.exports = {
 			throw new Error("invalid data");
 		}
 		content = content.split(/[\n\r]+/ig);
-		if(!content.length){
-			throw new Error("invalid data");
-		}
 		var headers = content.shift().split(','),
 			hashData = {};
 		headers.forEach(function(item){
@@ -95,7 +88,7 @@ module.exports = {
 			if(item){
 				item = item.split(',');
 				item.forEach(function(val, index){
-					hashData[headers[index]].push(val);	
+					hashData[headers[index]].push(trimQuote(val));	
 				});
 			}
 		});
@@ -108,9 +101,6 @@ module.exports = {
 			throw new Error("invalid data");
 		}
 		content = content.split(/[\n\r]+/ig);
-		if(!content.length){
-			throw new Error("invalid data");
-		}
 		var headers = content.shift().split(','),
 			hashData = [];
 
@@ -149,7 +139,7 @@ function putDataInSchema(header, item, schema){
 			schema[headerName] = Number(item);
 		}
 	}else{
-		schema[header] = item;
+		schema[header] = trimQuote(item);
 	}
 	return schema ;
 }
@@ -173,4 +163,8 @@ function outputSave(data){
 			return this;
 		}
 	}
+}
+
+function trimQuote(str){
+	return str.trim().replace(/^["|'](.*)["|']$/, '$1');
 }
