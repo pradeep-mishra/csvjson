@@ -148,7 +148,7 @@ function getContentIfFile(filepath){
 	if (fs.existsSync(filepath)) {
         return fs.readFileSync(filepath, 'utf8');
     }
-    return filepath;
+    return null;
 }
 
 
