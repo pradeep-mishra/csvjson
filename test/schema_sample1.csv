@@ -1,2 +1,3 @@
 name,age,groups[;],musician,instruments.past,instruments.current[],instruments.current[]
 Mark,33,Beatles;Rolling Stones;The Band,Yes,Guitar,Drums,Bass Guitar
+Jeff,27,Rush;The Eagles;The Byrds,Yes,Guitar,Drums,Bass Guitar
