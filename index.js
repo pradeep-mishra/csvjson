@@ -116,7 +116,7 @@ module.exports = {
 		});
 		return outputSave(hashData);
 	}
-}
+};
 
 function putDataInSchema(header, item, schema){
 	var match = header.match(/\.|\[\]|\[(.)\]|-|\+/ig);

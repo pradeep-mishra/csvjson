@@ -91,7 +91,8 @@ convert csv data to schema json object
     for creating schema of json object following key can be used in header of csv file:
     
     .   for defining nested json object
-    []  for defining data as array (suffix)
+    []  for defining data as array (suffix) -- in addition
+    can add delimiter in the array (suffix)
     +   for defining data as integer (suffix)
     -   for omitting data from result output (prefix)
 
@@ -101,9 +102,9 @@ convert csv data to schema json object
 /*
     schema_sample.csv
    
-    created,contact.name,contact.age+,contact.number+,address[],address[],contact.hobbies[],contact.hobbies[],-id
-    2014-11-12,Pradeep,25,4352436,MG Road,Mumbai,pc games,guitar,5
-    2014-10-06,Arnav,16,7364537,KB Road,Mumbai,pc games,traveling,7
+    created,contact.name,contact.age+,contact.number+,address[],address[],contact.hobbies[;],-id
+    2014-11-12,Pradeep,25,4352436,MG Road,Mumbai,pc games; guitar,5
+    2014-10-06,Arnav,16,7364537,KB Road,Mumbai,pc games; traveling,7
 
 
 */

@@ -1,27 +1,34 @@
 {
-    "name" : "csvjson" ,
-    "description" : "convert csv to json and json to csv" ,
-    "version":"1.0.1",
-    "main": "./index.js",
-    "author":{
-        "name":"Pradeep Mishra"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/pradeep-mishra/csvjson.git"
-    },
-    "license": "MIT",
-    "readmeFilename": "README.md",
-    "keywords": [
-        "csv",
-        "csvtojson",
-        "csv2json",
-        "jsoncsv",
-        "json2csv",
-        "csv to json",
-        "coloum-array",
-        "schema",
-        "schema-json",
-        "schema-csv"    
-    ]
+  "name": "csvjson",
+  "description": "convert csv to json and json to csv",
+  "version": "1.0.1",
+  "main": "./index.js",
+  "author": {
+    "name": "Pradeep Mishra"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/pradeep-mishra/csvjson.git"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha"
+  },
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "keywords": [
+    "csv",
+    "csvtojson",
+    "csv2json",
+    "jsoncsv",
+    "json2csv",
+    "csv to json",
+    "coloum-array",
+    "schema",
+    "schema-json",
+    "schema-csv"
+  ],
+  "devDependencies": {
+    "mocha": "^2.1.0",
+    "chai": "^1.10.0"
+  }
 }
