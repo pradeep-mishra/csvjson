@@ -119,7 +119,7 @@ module.exports = {
 }
 
 function putDataInSchema(header, item, schema){
-	var match = header.match(/\.|\[\]|-|\+/ig);
+	var match = header.match(/\.|\[\]|\[(.)\]|-|\+/ig);
 	if(match){
 		if(match.indexOf('-') !== -1){
 			return true;
@@ -129,16 +129,17 @@ function putDataInSchema(header, item, schema){
 			schema[currentPoint] = schema[currentPoint] || {};
 			putDataInSchema(headParts.join("."), item, schema[currentPoint]);
 		}else if(match.indexOf('[]') !== -1){
+			console.log('match', match);
 			var headerName = header.replace(/\[\]/ig,"");
 			if(!schema[headerName]){
 				schema[headerName] = [];
 			}
-			if(/\[(.)\]/.test(match)) {
-				var delimiter = match.match(/\[(.)\]/)[0];
-				schema[headerName] = convertArray(item, delimiter);
-				return schema;
-			}
 			schema[headerName].push(item);	
+		}else if(/\[(.)\]/.test(match[0])){
+			console.log(match, typeof(match));
+			var delimiter = match[0].split('[')[1].split(']')[0];
+			console.log(item, delimiter);
+			schema[headerName] = convertArray(item, delimiter);
 		}else if(match.indexOf('+') !== -1){
 			var headerName = header.replace(/\+/ig,"");
 			schema[headerName] = Number(item);
@@ -175,5 +176,11 @@ function trimQuote(str){
 }
 
 function convertArray(str, delimiter) {
-	return str.split(delimiter);
+	var output = [];
+	var arr = str.split(delimiter);
+	arr.forEach(function(val) {
+		var trimmed = val.trim();
+		output.push(trimmed);
+	});
+	return output;
 }
