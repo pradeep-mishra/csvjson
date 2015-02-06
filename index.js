@@ -129,16 +129,14 @@ function putDataInSchema(header, item, schema){
 			schema[currentPoint] = schema[currentPoint] || {};
 			putDataInSchema(headParts.join("."), item, schema[currentPoint]);
 		}else if(match.indexOf('[]') !== -1){
-			console.log('match', match);
 			var headerName = header.replace(/\[\]/ig,"");
 			if(!schema[headerName]){
 				schema[headerName] = [];
 			}
 			schema[headerName].push(item);	
 		}else if(/\[(.)\]/.test(match[0])){
-			console.log(match, typeof(match));
-			var delimiter = match[0].split('[')[1].split(']')[0];
-			console.log(item, delimiter);
+			var delimiter = match[0].match(/\[(.)\]/)[1];
+			var headerName = header.replace(/\[(.)\]/ig,"");
 			schema[headerName] = convertArray(item, delimiter);
 		}else if(match.indexOf('+') !== -1){
 			var headerName = header.replace(/\+/ig,"");
