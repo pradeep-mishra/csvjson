@@ -133,6 +133,11 @@ function putDataInSchema(header, item, schema){
 			if(!schema[headerName]){
 				schema[headerName] = [];
 			}
+			if(/\[(.)\]/.test(match)) {
+				var delimiter = match.match(/\[(.)\]/)[0];
+				schema[headerName] = convertArray(item, delimiter);
+				return schema;
+			}
 			schema[headerName].push(item);	
 		}else if(match.indexOf('+') !== -1){
 			var headerName = header.replace(/\+/ig,"");
@@ -167,4 +172,8 @@ function outputSave(data){
 
 function trimQuote(str){
 	return str.trim().replace(/^["|'](.*)["|']$/, '$1');
+}
+
+function convertArray(str, delimiter) {
+	return str.split(delimiter);
 }
