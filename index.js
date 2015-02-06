@@ -116,10 +116,10 @@ module.exports = {
 		});
 		return outputSave(hashData);
 	}
-}
+};
 
 function putDataInSchema(header, item, schema){
-	var match = header.match(/\.|\[\]|-|\+/ig);
+	var match = header.match(/\.|\[\]|\[(.)\]|-|\+/ig);
 	if(match){
 		if(match.indexOf('-') !== -1){
 			return true;
@@ -134,6 +134,10 @@ function putDataInSchema(header, item, schema){
 				schema[headerName] = [];
 			}
 			schema[headerName].push(item);	
+		}else if(/\[(.)\]/.test(match[0])){
+			var delimiter = match[0].match(/\[(.)\]/)[1];
+			var headerName = header.replace(/\[(.)\]/ig,"");
+			schema[headerName] = convertArray(item, delimiter);
 		}else if(match.indexOf('+') !== -1){
 			var headerName = header.replace(/\+/ig,"");
 			schema[headerName] = Number(item);
@@ -167,4 +171,14 @@ function outputSave(data){
 
 function trimQuote(str){
 	return str.trim().replace(/^["|'](.*)["|']$/, '$1');
+}
+
+function convertArray(str, delimiter) {
+	var output = [];
+	var arr = str.split(delimiter);
+	arr.forEach(function(val) {
+		var trimmed = val.trim();
+		output.push(trimmed);
+	});
+	return output;
 }
