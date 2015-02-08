@@ -7,22 +7,24 @@ describe('csvjson', function() {
     expect(csvjson).to.be.an('object');
     done();
   });
+  it('should have all exposed functions', function(done) {
+    expect(csvjson).to.have.keys(['toObject', 'toArray', 'toCSV', 'toColumnArray', 'toSchemaObject']);
+    done();
+  });
 });
 
-describe('csvjson of sample.csv', function() {
+describe('toObject', function() {
+  var result = csvjson.toObject('./test/sample.csv').output;
   it('should return an array of objects', function(done) {
-    var result = csvjson.toObject('./test/sample.csv').output;
-
     expect(result).to.be.an('array');
     expect(result[0]).to.be.an('object');
     done();
   });
 });
 
-describe('csvjson of sample_schema.csv', function() {
-  it('should return an array of objects with next objects', function(done) {
-    var result = csvjson.toSchemaObject('./test/schema_sample.csv').output;
-
+describe('toSchemaObject', function() {
+  var result = csvjson.toSchemaObject('./test/schema_sample.csv').output;
+  it('should return an array of objects with nested objects', function(done) {
     expect(result).to.be.an('array');
     expect(result[0]).to.be.an('object');
     expect(result[0]['contact']).to.be.an('object');
@@ -30,9 +32,10 @@ describe('csvjson of sample_schema.csv', function() {
   });
 });
 
-describe('csvjson of sample_schema1.csv', function() {
+describe('toSchemaObject with nested and delimted arrays', function() {
   var result = csvjson.toSchemaObject('./test/schema_sample1.csv').output;
-  it('should return an array of objects with next objects', function(done) {
+
+  it('should return a nested array of objects with next objects', function(done) {
     expect(result).to.be.an('array');
     expect(result[0]).to.be.an('object');
     expect(result[0]['instruments']).to.be.an('object');
@@ -49,14 +52,13 @@ describe('csvjson of sample_schema1.csv', function() {
   });
 });
 
-describe('csvjson of sample_schema2.csv', function() {
+describe('toSchemaObject with nested arrays of objects', function() {
   var result = csvjson.toSchemaObject('./test/schema_sample2.csv').output;
-  it('should return nested array', function(done) {
-    expect(result[0]['groups']).to.be.an('object');
-    expect(result[0]['groups']['like']).to.be.an('array');
-    expect(result[0]['groups']['dislike']).to.have.length(2);
-    expect(result[1]['groups']['dislike']).to.have.length(1);
-    expect(result[1]['groups']['ambivalent'][1]).to.equal('Wilco');
+
+  it('should return an array of objects', function(done) {
+    expect(result[0]['contacts']).to.be.an('array');
+    expect(result[0]['contacts'][1]).to.be.an('object');
+    expect(result[1]['contacts'][1]).to.have.keys(['name', 'phone']);
     done();
   });
 
