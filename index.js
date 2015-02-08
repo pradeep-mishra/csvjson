@@ -30,7 +30,7 @@ module.exports = {
 			throw new Error("invalid data");
 		}
 		content = content.split(/[\n\r]+/ig);
-		var arrayData = [];	
+		var arrayData = [];
 		content.forEach(function(item){
 			if(item){
 				item = item.split(',').map(function(cItem){
@@ -119,27 +119,40 @@ module.exports = {
 };
 
 function putDataInSchema(header, item, schema){
-	var match = header.match(/\.|\[\]|\[(.)\]|-|\+/ig);
+	var match = header.match(/\[*[\W]\]\.(\w+)|\.|\[\]|\[(.)\]|-|\+/ig);
+  var headerName, delimiter, currentPoint;
 	if(match){
+    var testMatch = match[0];
 		if(match.indexOf('-') !== -1){
 			return true;
 		}else if(match.indexOf('.') !== -1){
 			var headParts = header.split('.');
-			var currentPoint = headParts.shift();
+			currentPoint = headParts.shift();
 			schema[currentPoint] = schema[currentPoint] || {};
-			putDataInSchema(headParts.join("."), item, schema[currentPoint]);
+			putDataInSchema(headParts.join('.'), item, schema[currentPoint]);
 		}else if(match.indexOf('[]') !== -1){
-			var headerName = header.replace(/\[\]/ig,"");
+			headerName = header.replace(/\[\]/ig,'');
 			if(!schema[headerName]){
 				schema[headerName] = [];
 			}
-			schema[headerName].push(item);	
-		}else if(/\[(.)\]/.test(match[0])){
-			var delimiter = match[0].match(/\[(.)\]/)[1];
-			var headerName = header.replace(/\[(.)\]/ig,"");
-			schema[headerName] = convertArray(item, delimiter);
-		}else if(match.indexOf('+') !== -1){
-			var headerName = header.replace(/\+/ig,"");
+			schema[headerName].push(item);
+		}else if(/\[*[\W]\]\.(\w+)/.test(testMatch)){
+      headerName = header.split('[').shift();
+      currentPoint = header.split('.').pop();
+      schema[headerName] = schema[headerName] || {};
+      schema[headerName][currentPoint] = schema[headerName][currentPoint] || {};
+      if(testMatch.match(/\[(.)\]/)) {
+        delimiter = testMatch.match(/\[(.)\]/).pop();
+        schema[headerName][currentPoint] = convertArray(item, delimiter);
+      }else{
+        schema[headerName][currentPoint].push(item);
+      }
+    }else if(/\[(.)\]/.test(testMatch)){
+      delimiter = testMatch.match(/\[(.)\]/)[1];
+      headerName = header.replace(/\[(.)\]/ig,'');
+      schema[headerName] = convertArray(item, delimiter);
+    }else if(match.indexOf('+') !== -1){
+			headerName = header.replace(/\+/ig,"");
 			schema[headerName] = Number(item);
 		}
 	}else{
@@ -150,9 +163,9 @@ function putDataInSchema(header, item, schema){
 
 function getContentIfFile(filepath){
 	if (fs.existsSync(filepath)) {
-        return fs.readFileSync(filepath, 'utf8');
-    }
-    return null;
+    return fs.readFileSync(filepath, 'utf8');
+  }
+  return null;
 }
 
 
@@ -166,7 +179,7 @@ function outputSave(data){
 			fs.writeFileSync(filepath, data, {encoding:'utf8'});
 			return this;
 		}
-	}
+	};
 }
 
 function trimQuote(str){
