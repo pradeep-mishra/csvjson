@@ -91,8 +91,9 @@ convert csv data to schema json object
     for creating schema of json object following key can be used in header of csv file:
     
     .   for defining nested json object
-    []  for defining data as array (suffix) -- in addition
-    can add delimiter in the array (suffix)
+    []  for defining data as array (suffix)
+        -- can add delimiter in the array (i.e. [;] for delimiter of ;)
+        -- can nest objects in the array, index must be listed (i.e. [1] for index 1)
     +   for defining data as integer (suffix)
     -   for omitting data from result output (prefix)
 
@@ -102,10 +103,9 @@ convert csv data to schema json object
 /*
     schema_sample.csv
    
-    created,contact.name,contact.age+,contact.number+,address[],address[],contact.hobbies[;],-id
-    2014-11-12,Pradeep,25,4352436,MG Road,Mumbai,pc games; guitar,5
-    2014-10-06,Arnav,16,7364537,KB Road,Mumbai,pc games; traveling,7
-
+    created,contact.name,contact.age+,contact.number+,address[],address[],contact.hobbies[;],-id,friends[0].name,friends[0].phone,friends[1].name,friends[1].phone
+    2014-11-12,Pradeep,25,4352436,MG Road,Mumbai,pc games; guitar,5,Jeff,8761234567,Mike,1234567890
+    2014-10-06,Arnav,16,7364537,KB Road,Mumbai,pc games; traveling,7,Steve,555555555,Pradeep,4352436
 
 */
 
@@ -124,7 +124,17 @@ csvjson.toSchemaObject('./schema_sample.csv').output
                 "hobbies":["pc games","guitar"]
                 
             },
-            "address":["MG Road","Mumbai"]
+            "address":["MG Road","Mumbai"],
+            "friends":[
+                {
+                    "name": "Jeff",
+                    "phone": "8761234567"
+                },
+                {
+                    "name": "Mike",
+                    "phone": "1234567890"
+                }
+            ]
         },
         {
             "created":"2014-10-06",
@@ -135,7 +145,17 @@ csvjson.toSchemaObject('./schema_sample.csv').output
                 "hobbies":["pc games","traveling"]
                 
             },
-            "address":["KB Road","Mumbai"]
+            "address":["KB Road","Mumbai"],
+            "friends":[
+                {
+                    "name": "Steve",
+                    "phone": "5555555555"
+                },
+                {
+                    "name": "Pradeep",
+                    "phone": "4352436"
+                }
+            ]
         }
         
     ]

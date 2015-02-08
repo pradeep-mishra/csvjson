@@ -1,0 +1,3 @@
+name,age,contacts[0].name,contacts[0].phone,contacts[1].name,contacts[1].phone,musician,instruments.past,instruments.current[],instruments.current[]
+Mark,33,Jim Palmer,8888888888,Marcus Aurelius,7309899877,Yes,Guitar,Drums,Bass Guitar
+Jeff,27,John Doe,8009008000,Michael Corleone,2121001000,Yes,Drums,Flute,Trumpet
