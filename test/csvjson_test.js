@@ -51,7 +51,7 @@ describe('csvjson of sample_schema1.csv', function() {
 
 describe('csvjson of sample_schema2.csv', function() {
   var result = csvjson.toSchemaObject('./test/schema_sample2.csv').output;
-  it('should return nested array of objects', function(done) {
+  it('should return nested array', function(done) {
     expect(result[0]['groups']).to.be.an('object');
     expect(result[0]['groups']['like']).to.be.an('array');
     expect(result[0]['groups']['dislike']).to.have.length(2);
