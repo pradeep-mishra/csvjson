@@ -6,7 +6,7 @@
 csvjson
 =======
 
-csv to json and json to csv converter
+Simple csv to json and json to csv converter ( Node.js Only )
 -------------------------------------
 
 &copy; Pradeep Mishra, Licensed under the MIT-LICENSE
