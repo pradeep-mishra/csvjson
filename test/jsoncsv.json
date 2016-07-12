@@ -1,0 +1,30 @@
+{
+ "book": {
+   "person": [
+     {
+       "firstName": "Jane",
+       "lastName": "Doe",
+       "age": "25",
+       "address": {
+         "streetAddress": "21 2nd Street",
+         "city": "Las Vegas",
+         "state": "NV",
+         "postalCode": "10021-3100"
+       },
+       "hobbies" : ["gaming", "vollyball"]
+     },
+     {
+       "firstName": "Agatha",
+       "lastName": "Doe",
+       "age": "25",
+       "address": {
+         "streetAddress": "21 2nd Street",
+         "city": "Las Vegas",
+         "state": "NV",
+         "postalCode": "10021-3100"
+       },
+       "hobbies" : ["dancing", "politics"]
+     }
+   ]
+ }
+}

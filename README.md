@@ -1,13 +1,8 @@
 
-
-[![Build Status](https://travis-ci.org/pradeep-mishra/csvjson.svg?branch=master)](https://travis-ci.org/pradeep-mishra/csvjson)
-
-
-
-csvjson (Node.js)
+csvjson
 =================
 
-Simple csv to json and json to csv converter ( Node.js Only )
+simple csv to json and json to csv converter for node.js and browser.
 -------------------------------------
 
 &copy; Pradeep Mishra, Licensed under the MIT-LICENSE
@@ -22,8 +17,12 @@ Features
 * csv to array object
 * csv to column array object
 * json object to csv
-* array object to csv
+* json array to csv
  
+
+Warning
+-------
+* csvjson 2x has breaking changes and its not compatible with csvjson 1x code.
 
 
 Example usage
@@ -52,41 +51,91 @@ var csvjson = require('csvjson');
 
 
 */
+
+
+/*
+schema_sample2.csv
+
+name,age,contacts[0].name,contacts[0].phone,contacts[1].name,contacts[1].phone,musician,instruments.past,instruments.current[],instruments.current[]
+Mark,33,Jim Palmer,8888888888,Marcus Aurelius,7309899877,Yes,Guitar,Drums,Bass Guitar
+Jeff,27,John Doe,8009008000,Michael Corleone,2121001000,Yes,Drums,Flute,Trumpet
+
+*/
+
+/*
+jsoncsv.json
+
+
+{
+ "book": {
+   "person": [
+     {
+       "firstName": "Jane",
+       "lastName": "Doe",
+       "age": "25",
+       "address": {
+         "streetAddress": "21 2nd Street",
+         "city": "Las Vegas",
+         "state": "NV",
+         "postalCode": "10021-3100"
+       },
+       "hobbies" : ["gaming", "volleyball"]
+     },
+     {
+       "firstName": "Agatha",
+       "lastName": "Doe",
+       "age": "25",
+       "address": {
+         "streetAddress": "21 2nd Street",
+         "city": "Las Vegas",
+         "state": "NV",
+         "postalCode": "10021-3100"
+       },
+       "hobbies" : ["dancing", "politics"]
+     }
+   ]
+ }
+}
+
+
+*/
+
+
 ```
 
 convert csv data to json object 
 ----------------------------------------
 ```javascript
-csvjson.toObject('./sample.csv').output
+var data = fs.readFileSync(path.join(__dirname, 'schema_sample2.csv'), { encoding : 'utf8'});
+csvjson.toObject(data)
 
 /*
-	return 
+    returns
 
-	[
-		{
-			sr : 1,
-			name : "rocky",
-			age : 33,
-			gender : "male"
-		},
-		{
-			sr : 2,
-			name : "jacky",
-			age : 22,
-			gender : "male"
-		},
-		{
-			sr : 3,
-			name : "suzy",
-			age : 21,
-			gender : "female"
-		}
+    [
+        {
+            sr : 1,
+            name : "rocky",
+            age : 33,
+            gender : "male"
+        },
+        {
+            sr : 2,
+            name : "jacky",
+            age : 22,
+            gender : "male"
+        },
+        {
+            sr : 3,
+            name : "suzy",
+            age : 21,
+            gender : "female"
+        }
 
-	]
+    ]
 
 */
 
-csvjson.toObject('./sample.csv').save('./sample.json');
 
 ```
 convert csv data to schema json object 
@@ -115,10 +164,11 @@ convert csv data to schema json object
 
 */
 
-csvjson.toSchemaObject('./schema_sample.csv').output
+var data = fs.readFileSync(path.join(__dirname, 'schema_sample.csv'), { encoding : 'utf8'});
+csvjson.toSchemaObject(data)
 
 /*
-    return
+    returns
     
     [
         {
@@ -169,55 +219,63 @@ csvjson.toSchemaObject('./schema_sample.csv').output
 
 */
 
-csvjson.toSchemaObject('./schema_sample.csv').save('./schema_sample.json');
-
 ```
 convert csv data to array object
 -----------------------------------------
 ```javascript
-csvjson.toArray('./sample.csv').output
+
+var data = fs.readFileSync(path.join(__dirname, 'sample.csv'), { encoding : 'utf8'});
+csvjson.toArray(data);
 
 /*
-	return array object
-	[
-		["sr","name","age","gender"],
-		["1","rocky","33","male"],
-		["2","jacky","22","male"],
-		["3","suzy","21","female"]
-	]
+    returns
+    [
+        ["sr","name","age","gender"],
+        ["1","rocky","33","male"],
+        ["2","jacky","22","male"],
+        ["3","suzy","21","female"]
+    ]
 
 */
-
-csvjson.toArray('./sample.csv').save('./sample.json');
 
 ```
 convert csv data to column array object
 ---------------------------------------
 ```javascript
-csvjson.toColumnArray('./sample.csv').output
+
+var data = fs.readFileSync(path.join(__dirname, 'sample.csv'), { encoding : 'utf8'});
+csvjson.toColumnArray('./sample.csv')
 
 /*
-	return 
+    returns 
 
-	{ 
-	    sr: [ '1', '2', '3' ],
+    { 
+        sr: [ '1', '2', '3' ],
         name: [ 'rocky', 'jacky', 'suzy' ],
         age: [ '33', '22', '21' ],
         gender: [ 'male', 'male', 'female' ] 
-	}
+    }
 
 */
-csvjson.toColumnArray('./sample.csv').save('./sample.json');
 
 
 ```
 convert json object to csv data
 -------------------------------
 ```javascript
-csvjson.toCSV('./sample.json').output;
 
-csvjson.toCSV('./sample.json').save('./sample.csv');
+var data = fs.readFileSync(path.join(__dirname, 'jsoncsv.json'), { encoding : 'utf8'});
+csvjson.toCSV(data);
 
+/*
+
+returns
+
+book.person[].firstName,book.person[].lastName,book.person[].age,book.person[].address.streetAddress,book.person[].address.city,book.person[].address.state,book.person[].address.postalCode,book.person[].hobbies[]
+Jane,Doe,25,21 2nd Street,Las Vegas,NV,10021-3100,gaming;volleyball
+Agatha,Doe,25,21 2nd Street,Las Vegas,NV,10021-3100,dancing;politics
+
+*/
 ```
 
 ```bash

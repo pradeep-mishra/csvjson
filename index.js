@@ -1,122 +1,11 @@
-var fs = require("fs"),
-    util = require("util");
 
 module.exports = {
-
-    toObject : function(data){
-        var content = getContentIfFile(data);
-        if(!content || typeof content !== "string"){
-            throw new Error("invalid data");
-        }
-        content = content.split(/[\n\r]+/ig);
-        var headers = content.shift().split(','),
-            hashData = [];
-        content.forEach(function(item){
-            if(item){
-                item = item.split(',');
-                var hashItem = {};
-                headers.forEach(function(headerItem, index){
-                    hashItem[headerItem] = trimQuote(item[index]);
-                });
-                hashData.push(hashItem);
-            }
-        });
-        return outputSave(hashData);
-    },
-
-    toArray : function(data){
-        var content = getContentIfFile(data);
-        if(!content || typeof content !== "string"){
-            throw new Error("invalid data");
-        }
-        content = content.split(/[\n\r]+/ig);
-        var arrayData = [];
-        content.forEach(function(item){
-            if(item){
-                item = item.split(',').map(function(cItem){
-                    return trimQuote(cItem);
-                });
-                arrayData.push(item);
-            }
-        });
-        return outputSave(arrayData);
-    },
-
-    toCSV : function(data){
-        var content = getContentIfFile(data);
-        if(!content){
-            throw new Error("invalid data");
-        }
-        if(typeof content === "string"){
-            content = JSON.parse(content);
-        }   
-        if(!content.length){
-            throw new Error("invalid data");
-        }
-        var textContent = [],
-            headers = false;
-        content.forEach(function(item){
-            if(util.isArray(item)){
-                textContent.push(item.join(','));
-            }else{
-                headers = Object.keys(item).join(',');
-                var data = [];
-                for(var i in item){
-                    data.push(item[i]);
-                }
-                textContent.push(data.join(','));
-            }
-        });
-        if(headers){
-            textContent.unshift(headers);
-        }
-        return outputSave(textContent.join("\n")) ;
-    },
-
-    toColumnArray : function(data){
-        var content = getContentIfFile(data);
-        if(!content || typeof content !== "string"){
-            throw new Error("invalid data");
-        }
-        content = content.split(/[\n\r]+/ig);
-        var headers = content.shift().split(','),
-            hashData = {};
-        headers.forEach(function(item){
-            hashData[item] = [];
-        });
-        content.forEach(function(item){
-            if(item){
-                item = item.split(',');
-                item.forEach(function(val, index){
-                    hashData[headers[index]].push(trimQuote(val));  
-                });
-            }
-        });
-        return outputSave(hashData);
-    },
-
-    toSchemaObject : function(data){
-        var content = getContentIfFile(data);
-        if(!content || typeof content !== "string"){
-            throw new Error("invalid data");
-        }
-        content = content.split(/[\n\r]+/ig);
-        var headers = content.shift().split(','),
-            hashData = [];
-
-        content.forEach(function(item){
-            if(item){
-                item = item.split(',');
-                var schemaObject = {};
-                item.forEach(function(val, index){
-                    putDataInSchema(headers[index], val, schemaObject);
-                });
-                hashData.push(schemaObject);
-            }
-        });
-        return outputSave(hashData);
-    }
-};
+    toObject        : toObject,
+    toArray         : toArray,
+    toCSV           : toCSV,
+    toColumnArray   : toColumnArray,
+    toSchemaObject  : toSchemaObject
+}
 
 function putDataInSchema(header, item, schema){
     var match = header.match(/\[*[\d]\]\.(\w+)|\.|\[\]|\[(.)\]|-|\+/ig);
@@ -157,26 +46,98 @@ function putDataInSchema(header, item, schema){
     return schema ;
 }
 
-function getContentIfFile(filepath){
-    if (fs.existsSync(filepath)) {
-        return fs.readFileSync(filepath, 'utf8');
+function toColumnArray(data){
+
+    var content = data;
+    if(typeof(content) !== "string"){
+        throw new Error("Invalid input, input data should be a string");
     }
-    return null;
-}
+    content         = content.split(/[\n\r]+/ig);
+    var headers     = content.shift().split(',');
+    var hashData    = { };
 
-
-function outputSave(data){
-    return {
-        output : data,
-        save : function(filepath){
-            if(typeof data === "object"){
-                data = JSON.stringify(data);
-            }
-            fs.writeFileSync(filepath, data, {encoding:'utf8'});
-            return this;
+    headers.forEach(function(item){
+        hashData[item] = [];
+    });
+    
+    content.forEach(function(item){
+        if(item){
+            item = item.split(',');
+            item.forEach(function(val, index){
+                hashData[headers[index]].push(trimQuote(val));  
+            });
         }
-    };
+    });
+
+    return hashData;
 }
+
+function toObject(data){
+    var content = data;
+    if(typeof(content) !== "string"){
+        throw new Error("Invalid input, input data should be a string");
+    }
+    content = content.split(/[\n\r]+/ig);
+    var headers = content.shift().split(','),
+        hashData = [];
+    content.forEach(function(item){
+        if(item){
+            item = item.split(',');
+            var hashItem = {};
+            headers.forEach(function(headerItem, index){
+                hashItem[headerItem] = trimQuote(item[index]);
+            });
+            hashData.push(hashItem);
+        }
+    });
+    return hashData;
+}
+
+function toSchemaObject(data){
+
+    var content = data;
+    if(typeof(content) !== "string"){
+        throw new Error("Invalid input, input should be a string");
+    }
+    content         = content.split(/[\n\r]+/ig);
+    var headers     = content.shift().split(',');
+    var hashData    = [ ];
+
+    content.forEach(function(item){
+        if(item){
+            item = item.split(',');
+            var schemaObject = {};
+            item.forEach(function(val, index){
+                putDataInSchema(headers[index], val, schemaObject);
+            });
+            hashData.push(schemaObject);
+        }
+    });
+
+    return hashData;
+}
+
+
+function toArray(data){
+    var content = data;
+
+    if(typeof(content) !== "string"){
+        throw new Error("Invalid input, input data should be a string");
+    }
+
+    content = content.split(/[\n\r]+/ig);
+    var arrayData = [];
+    content.forEach(function(item){
+        if(item){
+            item = item.split(',').map(function(cItem){
+                return trimQuote(cItem);
+            });
+            arrayData.push(item);
+        }
+    });
+    return arrayData;
+}
+
 
 function trimQuote(str){
     return str.trim().replace(/^["|'](.*)["|']$/, '$1');
@@ -191,3 +152,107 @@ function convertArray(str, delimiter) {
     });
     return output;
 }
+
+
+function dataType(arg) {
+    if (arg === null) {
+        return 'null';
+    }
+    else if (arg && (arg.nodeType === 1 || arg.nodeType === 9)) {
+        return 'element';
+    }
+    var type = (Object.prototype.toString.call(arg)).match(/\[object (.*?)\]/)[1].toLowerCase();
+    if (type === 'number') {
+        if (isNaN(arg)) {
+            return 'nan';
+        }
+        if (!isFinite(arg)) {
+            return 'infinity';
+        }
+    }
+    return type;
+}
+
+function _toCSV(data, csv, title, origin){
+    if(!data){
+        return data;
+    }else if(Array.isArray(data)){
+        data.some(function(i){
+            if(dataType(i) === 'string'){
+                _toCSV(data.join(';'), csv, title + '[]');
+                return true;
+            }
+            return _toCSV(i, csv, title + '[]');
+        });
+    }else if(dataType(data) === 'object'){
+        return Object.keys(data).forEach(function(key){
+            return _toCSV(data[key], csv, title +  (origin ? '' : '.') + key);
+        });
+    }else{
+        if(csv[title]){
+            csv[title].push(data);
+        }else{
+            csv[title] = [ data ];
+        }
+    }
+}
+
+function toCSV(data, opts){
+    opts            = opts || { };
+    opts.delimiter  = opts.delimiter || ',';
+    opts.wrap       = opts.wrap || '';
+    var csvJSON     = { };
+    var csvData     = "";
+    var topLength   = 0;
+    var headers     = null;
+    
+    if(opts.wrap === true){
+        opts.wrap = '"';
+    }
+
+    if(dataType(data) === "string"){
+        data = JSON.parse(data);
+    }
+    
+    _toCSV(data, csvJSON, '', true);
+    
+    if(opts.wrap){
+        headers = Object.keys(csvJSON).map(function(i){
+            return opts.wrap + i + opts.wrap;
+        }).join(opts.delimiter) + '\n';
+    }else{
+        headers = Object.keys(csvJSON).join(opts.delimiter) + '\n';
+    }
+        
+    csvData += headers; 
+
+    Object.keys(csvJSON).forEach(function(i){
+        if(Array.isArray(csvJSON[i]) && csvJSON[i].length > topLength){
+            topLength = csvJSON[i].length;
+        }
+    });
+        
+    for(var i = 0; i < topLength; i++){
+        var thisLine = [ ];
+        Object.keys(csvJSON).forEach(function(j){
+            if(Array.isArray(csvJSON[j]) && csvJSON[j][i]){
+                if(opts.wrap){
+                    thisLine.push( opts.wrap + csvJSON[j][i] + opts.wrap);
+                }else{
+                    thisLine.push(csvJSON[j][i]);
+                }
+                
+            }else{
+                if(opts.wrap){
+                    thisLine.push( opts.wrap + opts.wrap);
+                }else{
+                    thisLine.push('');
+                }           
+            }
+        });
+        csvData += thisLine.join(opts.delimiter) + '\n' ;
+    }
+    return csvData;
+
+}
+

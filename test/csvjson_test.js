@@ -1,6 +1,7 @@
-var csvjson = require('../index.js');
-
-var expect = require('chai').expect;
+var csvjson = require('../index');
+var fs      = require('fs');
+var expect  = require('chai').expect;
+var path    = require('path');
 
 describe('csvjson', function() {
   it('should be an object', function(done) {
@@ -14,7 +15,7 @@ describe('csvjson', function() {
 });
 
 describe('toObject', function() {
-  var result = csvjson.toObject('./test/sample.csv').output;
+  var result = csvjson.toObject(fs.readFileSync(path.join(__dirname, 'sample.csv'), { encoding : 'utf8'}));
   it('should return an array of objects', function(done) {
     expect(result).to.be.an('array');
     expect(result[0]).to.be.an('object');
@@ -23,7 +24,7 @@ describe('toObject', function() {
 });
 
 describe('toSchemaObject', function() {
-  var result = csvjson.toSchemaObject('./test/schema_sample.csv').output;
+  var result = csvjson.toSchemaObject(fs.readFileSync(path.join(__dirname, 'schema_sample.csv'), { encoding : 'utf8'}));
   it('should return an array of objects with nested objects', function(done) {
     expect(result).to.be.an('array');
     expect(result[0]).to.be.an('object');
@@ -32,8 +33,8 @@ describe('toSchemaObject', function() {
   });
 });
 
-describe('toSchemaObject with nested and delimted arrays', function() {
-  var result = csvjson.toSchemaObject('./test/schema_sample1.csv').output;
+describe('toSchemaObject with nested and delimited arrays', function() {
+  var result = csvjson.toSchemaObject(fs.readFileSync(path.join(__dirname, 'schema_sample1.csv'), { encoding : 'utf8'}));
 
   it('should return a nested array of objects with next objects', function(done) {
     expect(result).to.be.an('array');
@@ -53,7 +54,7 @@ describe('toSchemaObject with nested and delimted arrays', function() {
 });
 
 describe('toSchemaObject with nested arrays of objects', function() {
-  var result = csvjson.toSchemaObject('./test/schema_sample2.csv').output;
+  var result = csvjson.toSchemaObject(fs.readFileSync(path.join(__dirname, 'schema_sample2.csv'), { encoding : 'utf8'}));
 
   it('should return an array of objects', function(done) {
     expect(result[0]['contacts']).to.be.an('array');
@@ -74,3 +75,16 @@ describe('toSchemaObject with nested arrays of objects', function() {
     done();
   });
 });
+
+
+
+describe('toCSV', function() {
+  it('should match output', function(done) {
+      var result = csvjson.toCSV(fs.readFileSync(path.join(__dirname, 'jsoncsv.json'), { encoding : 'utf8'}));
+      expect(result).to.be.an('string');
+      done();
+  });
+  
+});
+
+
