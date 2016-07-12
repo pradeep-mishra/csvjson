@@ -265,7 +265,11 @@ convert json object to csv data
 ```javascript
 
 var data = fs.readFileSync(path.join(__dirname, 'jsoncsv.json'), { encoding : 'utf8'});
-csvjson.toCSV(data);
+var options = {
+    delimiter   : ",",   // <String> optional default is comma
+    wrap        : false  // <String|Boolean> optional default in false
+}
+csvjson.toCSV(data, options);
 
 /*
 
