@@ -59,12 +59,12 @@ function toColumnArray(data){
     headers.forEach(function(item){
         hashData[item] = [];
     });
-    
+
     content.forEach(function(item){
         if(item){
             item = item.split(',');
             item.forEach(function(val, index){
-                hashData[headers[index]].push(trimQuote(val));  
+                hashData[headers[index]].push(trimQuote(val));
             });
         }
     });
@@ -173,20 +173,54 @@ function dataType(arg) {
     return type;
 }
 
-function _toCSV(data, csv, title, origin){
+function getKeyNameForObject(title, origin, key, opts){
+  if(opts.headers === 'key' || opts.headers === 'none'){
+    return key;
+  }else{
+    if(origin){
+      return (title ? title : '') + key;
+    }else{
+      return (title ? title + opts.objectDenote : '') + key;
+    }
+  }
+}
+
+function getKeyNameForArray(title, opts, contentIsObject){
+  if(contentIsObject && opts.headers === "relative"){
+     return "";
+  }
+  return title + opts.arrayDenote;
+}
+
+function _toCSV(data, csv, title, opts, origin){
     if(!data){
         return data;
     }else if(Array.isArray(data)){
         data.some(function(i){
             if(dataType(i) === 'string'){
-                _toCSV(data.join(';'), csv, title + '[]');
+                _toCSV(
+                  data.join(';'),
+                  csv,
+                  getKeyNameForArray(title, opts, false),
+                  opts
+                );
                 return true;
             }
-            return _toCSV(i, csv, title + '[]');
+            return _toCSV(
+              i,
+              csv,
+              getKeyNameForArray(title, opts, true),
+              opts
+            );
         });
     }else if(dataType(data) === 'object'){
         return Object.keys(data).forEach(function(key){
-            return _toCSV(data[key], csv, title +  (origin ? '' : '.') + key);
+            return _toCSV(
+              data[key],
+              csv,
+              getKeyNameForObject(title, origin, key, opts),
+              opts
+            );
         });
     }else{
         if(csv[title]){
@@ -198,14 +232,33 @@ function _toCSV(data, csv, title, origin){
 }
 
 function toCSV(data, opts){
-    opts            = opts || { };
-    opts.delimiter  = opts.delimiter || ',';
-    opts.wrap       = opts.wrap || '';
-    var csvJSON     = { };
-    var csvData     = "";
-    var topLength   = 0;
-    var headers     = null;
-    
+
+    opts                = opts || { };
+    opts.delimiter      = opts.delimiter || ',';
+
+    opts.wrap           = opts.wrap || '';
+
+    opts.arrayDenote    = opts.arrayDenote && String(opts.arrayDenote).trim() ? opts.arrayDenote : '[]';
+
+    opts.objectDenote   = opts.objectDenote && String(opts.objectDenote).trim() ? opts.objectDenote : '.';
+
+    opts.detailedOutput  = typeof(opts.detailedOutput) !== "boolean" ? true : opts.detailedOutput;
+
+    opts.headers  = String(opts.headers).toLowerCase();
+
+    if(!opts.headers.match(/none|full|relative|key/)){
+      opts.headers = 'full';
+    }else{
+      opts.headers = opts.headers.match(/none|full|relative|key/)[0];
+    }
+
+
+
+    var csvJSON         = { };
+    var csvData         = "";
+    var topLength       = 0;
+    var headers         = null;
+
     if(opts.wrap === true){
         opts.wrap = '"';
     }
@@ -213,9 +266,10 @@ function toCSV(data, opts){
     if(dataType(data) === "string"){
         data = JSON.parse(data);
     }
-    
-    _toCSV(data, csvJSON, '', true);
-    
+
+
+    _toCSV(data, csvJSON, '', opts, true);
+
     if(opts.wrap){
         headers = Object.keys(csvJSON).map(function(i){
             return opts.wrap + i + opts.wrap;
@@ -223,15 +277,15 @@ function toCSV(data, opts){
     }else{
         headers = Object.keys(csvJSON).join(opts.delimiter) + '\n';
     }
-        
-    csvData += headers; 
+
+    csvData += opts.headers !== 'none' ? headers : '';
 
     Object.keys(csvJSON).forEach(function(i){
         if(Array.isArray(csvJSON[i]) && csvJSON[i].length > topLength){
             topLength = csvJSON[i].length;
         }
     });
-        
+
     for(var i = 0; i < topLength; i++){
         var thisLine = [ ];
         Object.keys(csvJSON).forEach(function(j){
@@ -241,18 +295,18 @@ function toCSV(data, opts){
                 }else{
                     thisLine.push(csvJSON[j][i]);
                 }
-                
+
             }else{
                 if(opts.wrap){
                     thisLine.push( opts.wrap + opts.wrap);
                 }else{
                     thisLine.push('');
-                }           
+                }
             }
         });
         csvData += thisLine.join(opts.delimiter) + '\n' ;
     }
+
     return csvData;
 
 }
-

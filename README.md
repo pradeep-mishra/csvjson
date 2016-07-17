@@ -266,13 +266,23 @@ convert json object to csv data
 
 var data = fs.readFileSync(path.join(__dirname, 'jsoncsv.json'), { encoding : 'utf8'});
 var options = {
-    delimiter   : ",",   // <String> optional default is comma
-    wrap        : false  // <String|Boolean> optional default in false
+    delimiter   : ",",   
+    wrap        : false 
 }
+
+/* supported options
+    
+    delimiter = <String> optional default value is ","
+    wrap  = <String|Boolean> optional default value is false
+    headers = <String> optional supported values are "full", "none", "relative", "key"
+    objectDenote = <String> optional default value is "."
+    arrayDenote = <String> optional default value is "[]" 
+*/
+
+
 csvjson.toCSV(data, options);
 
 /*
-
 returns
 
 book.person[].firstName,book.person[].lastName,book.person[].age,book.person[].address.streetAddress,book.person[].address.city,book.person[].address.state,book.person[].address.postalCode,book.person[].hobbies[]
