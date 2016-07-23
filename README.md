@@ -107,7 +107,13 @@ convert csv data to json object
 ----------------------------------------
 ```javascript
 var data = fs.readFileSync(path.join(__dirname, 'schema_sample2.csv'), { encoding : 'utf8'});
-csvjson.toObject(data)
+/*
+{
+    delimiter : <String> optional default is ","
+}
+*/
+var options = { delimiter : ','};
+csvjson.toObject(data, options);
 
 /*
     returns
@@ -165,7 +171,13 @@ convert csv data to schema json object
 */
 
 var data = fs.readFileSync(path.join(__dirname, 'schema_sample.csv'), { encoding : 'utf8'});
-csvjson.toSchemaObject(data)
+/*
+{
+    delimiter : <String> optional default is ","
+}
+*/
+var options = { delimiter : ','};
+csvjson.toSchemaObject(data, options)
 
 /*
     returns
@@ -225,7 +237,14 @@ convert csv data to array object
 ```javascript
 
 var data = fs.readFileSync(path.join(__dirname, 'sample.csv'), { encoding : 'utf8'});
-csvjson.toArray(data);
+
+/*
+{
+    delimiter : <String> optional default is ","
+}
+*/
+var options = { delimiter : ','};
+csvjson.toArray(data, options);
 
 /*
     returns
@@ -244,7 +263,14 @@ convert csv data to column array object
 ```javascript
 
 var data = fs.readFileSync(path.join(__dirname, 'sample.csv'), { encoding : 'utf8'});
-csvjson.toColumnArray('./sample.csv')
+
+/*
+{
+    delimiter : <String> optional default is ","
+}
+*/
+var options = { delimiter : ','};
+csvjson.toColumnArray(data, options);
 
 /*
     returns 

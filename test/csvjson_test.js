@@ -23,6 +23,24 @@ describe('toObject', function() {
   });
 });
 
+describe('toArray', function() {
+  var result = csvjson.toArray(fs.readFileSync(path.join(__dirname, 'sample.csv'), { encoding : 'utf8'}));
+  it('should return an array of arrays', function(done) {
+    expect(result).to.be.an('array');
+    expect(result[0]).to.be.an('array');
+    done();
+  });
+});
+
+describe('toColumnArray', function() {
+  var result = csvjson.toColumnArray(fs.readFileSync(path.join(__dirname, 'sample.csv'), { encoding : 'utf8'}));
+  it('should return an object of arrays', function(done) {
+    expect(result).to.be.an('object');
+    expect(result.sr).to.be.an('array');
+    done();
+  });
+});
+
 describe('toSchemaObject', function() {
   var result = csvjson.toSchemaObject(fs.readFileSync(path.join(__dirname, 'schema_sample.csv'), { encoding : 'utf8'}));
   it('should return an array of objects with nested objects', function(done) {

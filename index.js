@@ -2,10 +2,204 @@
 module.exports = {
     toObject        : toObject,
     toArray         : toArray,
-    toCSV           : toCSV,
     toColumnArray   : toColumnArray,
-    toSchemaObject  : toSchemaObject
+    toSchemaObject  : toSchemaObject,
+    toCSV           : toCSV
 }
+
+
+function toColumnArray(data, opts){
+
+    opts = opts || { };
+    
+    var delimiter   = (opts.delimiter || ',');
+    var content     = data;
+
+    if(typeof(content) !== "string"){
+        throw new Error("Invalid input, input data should be a string");
+    }
+
+    content         = content.split(/[\n\r]+/ig);
+    var headers     = content.shift().split(delimiter);
+    var hashData    = { };
+
+    headers.forEach(function(item){
+        hashData[item] = [];
+    });
+
+    content.forEach(function(item){
+        if(item){
+            item = item.split(delimiter);
+            item.forEach(function(val, index){
+                hashData[headers[index]].push(trimQuote(val));
+            });
+        }
+    });
+
+    return hashData;
+}
+
+function toObject(data, opts){
+
+    opts = opts || { };
+
+    var delimiter   = (opts.delimiter || ',');
+    var content     = data;
+    if(typeof(content) !== "string"){
+        throw new Error("Invalid input, input data should be a string");
+    }
+    content = content.split(/[\n\r]+/ig);
+    var headers = content.shift().split(delimiter),
+        hashData = [];
+    content.forEach(function(item){
+        if(item){
+            item = item.split(delimiter);
+            var hashItem = {};
+            headers.forEach(function(headerItem, index){
+                hashItem[headerItem] = trimQuote(item[index]);
+            });
+            hashData.push(hashItem);
+        }
+    });
+    return hashData;
+}
+
+function toSchemaObject(data, opts){
+
+    opts = opts || { };
+
+    var delimiter   = (opts.delimiter || ',');
+    var content     = data;
+
+    if(typeof(content) !== "string"){
+        throw new Error("Invalid input, input should be a string");
+    }
+
+    content         = content.split(/[\n\r]+/ig);
+    var headers     = content.shift().split(delimiter);
+    var hashData    = [ ];
+
+    content.forEach(function(item){
+        if(item){
+            item = item.split(delimiter);
+            var schemaObject = {};
+            item.forEach(function(val, index){
+                putDataInSchema(headers[index], val, schemaObject);
+            });
+            hashData.push(schemaObject);
+        }
+    });
+
+    return hashData;
+}
+
+
+function toArray(data, opts){
+
+    opts = opts || { };
+
+    var delimiter   = (opts.delimiter || ',');
+    var content     = data;
+
+    if(typeof(content) !== "string"){
+        throw new Error("Invalid input, input data should be a string");
+    }
+
+    content = content.split(/[\n\r]+/ig);
+    var arrayData = [];
+    content.forEach(function(item){
+        if(item){
+            item = item.split(delimiter).map(function(cItem){
+                return trimQuote(cItem);
+            });
+            arrayData.push(item);
+        }
+    });
+    return arrayData;
+}
+
+function toCSV(data, opts){
+
+    opts                = opts || { };
+
+    opts.delimiter      = opts.delimiter || ',';
+
+    opts.wrap           = opts.wrap || '';
+
+    opts.arrayDenote    = opts.arrayDenote && String(opts.arrayDenote).trim() ? opts.arrayDenote : '[]';
+
+    opts.objectDenote   = opts.objectDenote && String(opts.objectDenote).trim() ? opts.objectDenote : '.';
+
+    opts.detailedOutput  = typeof(opts.detailedOutput) !== "boolean" ? true : opts.detailedOutput;
+
+    opts.headers  = String(opts.headers).toLowerCase();
+
+    if(!opts.headers.match(/none|full|relative|key/)){
+      opts.headers = 'full';
+    }else{
+      opts.headers = opts.headers.match(/none|full|relative|key/)[0];
+    }
+
+
+
+    var csvJSON         = { };
+    var csvData         = "";
+    var topLength       = 0;
+    var headers         = null;
+
+    if(opts.wrap === true){
+        opts.wrap = '"';
+    }
+
+    if(dataType(data) === "string"){
+        data = JSON.parse(data);
+    }
+
+
+    _toCSV(data, csvJSON, '', opts, true);
+
+    if(opts.wrap){
+        headers = Object.keys(csvJSON).map(function(i){
+            return opts.wrap + i + opts.wrap;
+        }).join(opts.delimiter) + '\n';
+    }else{
+        headers = Object.keys(csvJSON).join(opts.delimiter) + '\n';
+    }
+
+    csvData += opts.headers !== 'none' ? headers : '';
+
+    Object.keys(csvJSON).forEach(function(i){
+        if(Array.isArray(csvJSON[i]) && csvJSON[i].length > topLength){
+            topLength = csvJSON[i].length;
+        }
+    });
+
+    for(var i = 0; i < topLength; i++){
+        var thisLine = [ ];
+        Object.keys(csvJSON).forEach(function(j){
+            if(Array.isArray(csvJSON[j]) && csvJSON[j][i]){
+                if(opts.wrap){
+                    thisLine.push( opts.wrap + csvJSON[j][i] + opts.wrap);
+                }else{
+                    thisLine.push(csvJSON[j][i]);
+                }
+
+            }else{
+                if(opts.wrap){
+                    thisLine.push( opts.wrap + opts.wrap);
+                }else{
+                    thisLine.push('');
+                }
+            }
+        });
+        csvData += thisLine.join(opts.delimiter) + '\n' ;
+    }
+
+    return csvData;
+
+}
+
+
 
 function putDataInSchema(header, item, schema){
     var match = header.match(/\[*[\d]\]\.(\w+)|\.|\[\]|\[(.)\]|-|\+/ig);
@@ -46,97 +240,7 @@ function putDataInSchema(header, item, schema){
     return schema ;
 }
 
-function toColumnArray(data){
 
-    var content = data;
-    if(typeof(content) !== "string"){
-        throw new Error("Invalid input, input data should be a string");
-    }
-    content         = content.split(/[\n\r]+/ig);
-    var headers     = content.shift().split(',');
-    var hashData    = { };
-
-    headers.forEach(function(item){
-        hashData[item] = [];
-    });
-
-    content.forEach(function(item){
-        if(item){
-            item = item.split(',');
-            item.forEach(function(val, index){
-                hashData[headers[index]].push(trimQuote(val));
-            });
-        }
-    });
-
-    return hashData;
-}
-
-function toObject(data){
-    var content = data;
-    if(typeof(content) !== "string"){
-        throw new Error("Invalid input, input data should be a string");
-    }
-    content = content.split(/[\n\r]+/ig);
-    var headers = content.shift().split(','),
-        hashData = [];
-    content.forEach(function(item){
-        if(item){
-            item = item.split(',');
-            var hashItem = {};
-            headers.forEach(function(headerItem, index){
-                hashItem[headerItem] = trimQuote(item[index]);
-            });
-            hashData.push(hashItem);
-        }
-    });
-    return hashData;
-}
-
-function toSchemaObject(data){
-
-    var content = data;
-    if(typeof(content) !== "string"){
-        throw new Error("Invalid input, input should be a string");
-    }
-    content         = content.split(/[\n\r]+/ig);
-    var headers     = content.shift().split(',');
-    var hashData    = [ ];
-
-    content.forEach(function(item){
-        if(item){
-            item = item.split(',');
-            var schemaObject = {};
-            item.forEach(function(val, index){
-                putDataInSchema(headers[index], val, schemaObject);
-            });
-            hashData.push(schemaObject);
-        }
-    });
-
-    return hashData;
-}
-
-
-function toArray(data){
-    var content = data;
-
-    if(typeof(content) !== "string"){
-        throw new Error("Invalid input, input data should be a string");
-    }
-
-    content = content.split(/[\n\r]+/ig);
-    var arrayData = [];
-    content.forEach(function(item){
-        if(item){
-            item = item.split(',').map(function(cItem){
-                return trimQuote(cItem);
-            });
-            arrayData.push(item);
-        }
-    });
-    return arrayData;
-}
 
 
 function trimQuote(str){
@@ -229,84 +333,4 @@ function _toCSV(data, csv, title, opts, origin){
             csv[title] = [ data ];
         }
     }
-}
-
-function toCSV(data, opts){
-
-    opts                = opts || { };
-    opts.delimiter      = opts.delimiter || ',';
-
-    opts.wrap           = opts.wrap || '';
-
-    opts.arrayDenote    = opts.arrayDenote && String(opts.arrayDenote).trim() ? opts.arrayDenote : '[]';
-
-    opts.objectDenote   = opts.objectDenote && String(opts.objectDenote).trim() ? opts.objectDenote : '.';
-
-    opts.detailedOutput  = typeof(opts.detailedOutput) !== "boolean" ? true : opts.detailedOutput;
-
-    opts.headers  = String(opts.headers).toLowerCase();
-
-    if(!opts.headers.match(/none|full|relative|key/)){
-      opts.headers = 'full';
-    }else{
-      opts.headers = opts.headers.match(/none|full|relative|key/)[0];
-    }
-
-
-
-    var csvJSON         = { };
-    var csvData         = "";
-    var topLength       = 0;
-    var headers         = null;
-
-    if(opts.wrap === true){
-        opts.wrap = '"';
-    }
-
-    if(dataType(data) === "string"){
-        data = JSON.parse(data);
-    }
-
-
-    _toCSV(data, csvJSON, '', opts, true);
-
-    if(opts.wrap){
-        headers = Object.keys(csvJSON).map(function(i){
-            return opts.wrap + i + opts.wrap;
-        }).join(opts.delimiter) + '\n';
-    }else{
-        headers = Object.keys(csvJSON).join(opts.delimiter) + '\n';
-    }
-
-    csvData += opts.headers !== 'none' ? headers : '';
-
-    Object.keys(csvJSON).forEach(function(i){
-        if(Array.isArray(csvJSON[i]) && csvJSON[i].length > topLength){
-            topLength = csvJSON[i].length;
-        }
-    });
-
-    for(var i = 0; i < topLength; i++){
-        var thisLine = [ ];
-        Object.keys(csvJSON).forEach(function(j){
-            if(Array.isArray(csvJSON[j]) && csvJSON[j][i]){
-                if(opts.wrap){
-                    thisLine.push( opts.wrap + csvJSON[j][i] + opts.wrap);
-                }else{
-                    thisLine.push(csvJSON[j][i]);
-                }
-
-            }else{
-                if(opts.wrap){
-                    thisLine.push( opts.wrap + opts.wrap);
-                }else{
-                    thisLine.push('');
-                }
-            }
-        });
-        csvData += thisLine.join(opts.delimiter) + '\n' ;
-    }
-
-    return csvData;
-
 }
