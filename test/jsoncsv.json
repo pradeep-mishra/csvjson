@@ -4,7 +4,7 @@
      {
        "firstName": "Jane",
        "lastName": "Doe",
-       "age": "25",
+       "age": null,
        "address": {
          "streetAddress": "21 2nd Street",
          "city": "Las Vegas",

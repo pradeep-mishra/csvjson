@@ -177,19 +177,13 @@ function toCSV(data, opts){
     for(var i = 0; i < topLength; i++){
         var thisLine = [ ];
         Object.keys(csvJSON).forEach(function(j){
-            if(Array.isArray(csvJSON[j]) && csvJSON[j][i]){
+            if(Array.isArray(csvJSON[j])){
                 if(opts.wrap){
                     thisLine.push( opts.wrap + csvJSON[j][i] + opts.wrap);
                 }else{
                     thisLine.push(csvJSON[j][i]);
                 }
 
-            }else{
-                if(opts.wrap){
-                    thisLine.push( opts.wrap + opts.wrap);
-                }else{
-                    thisLine.push('');
-                }
             }
         });
         csvData += thisLine.join(opts.delimiter) + '\n' ;
@@ -297,9 +291,7 @@ function getKeyNameForArray(title, opts, contentIsObject){
 }
 
 function _toCSV(data, csv, title, opts, origin){
-    if(!data){
-        return data;
-    }else if(Array.isArray(data)){
+    if(Array.isArray(data)){
         data.some(function(i){
             if(dataType(i) === 'string'){
                 _toCSV(
@@ -317,7 +309,7 @@ function _toCSV(data, csv, title, opts, origin){
               opts
             );
         });
-    }else if(dataType(data) === 'object'){
+    }else if(data && dataType(data) === 'object'){
         return Object.keys(data).forEach(function(key){
             return _toCSV(
               data[key],
@@ -327,6 +319,9 @@ function _toCSV(data, csv, title, opts, origin){
             );
         });
     }else{
+        if(typeof(data) === "object"){
+            data = String(data);
+        }
         if(csv[title]){
             csv[title].push(data);
         }else{
