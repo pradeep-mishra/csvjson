@@ -18,11 +18,11 @@ Features
 * csv to column array object
 * json object to csv
 * json array to csv
- 
+
 
 Warning
 -------
-* csvjson 2x has breaking changes and its not compatible with csvjson 1x code.
+* csvjson 2x and above has breaking changes and its not compatible with csvjson 1x code.
 
 
 Example usage
@@ -44,7 +44,7 @@ var csvjson = require('csvjson');
 
 /*
     schema_sample.csv
-   
+
     created,contact.name,contact.age+,contact.number+,address[],address[],contact.hobbies[],contact.hobbies[],-id
     2014-11-12,Pradeep,25,4352436,MG Road,Mumbai,pc games,guitar,5
     2014-10-06,Arnav,16,7364537,KB Road,Mumbai,pc games,traveling,7
@@ -103,7 +103,7 @@ jsoncsv.json
 
 ```
 
-convert csv data to json object 
+convert csv data to json object
 ----------------------------------------
 ```javascript
 var data = fs.readFileSync(path.join(__dirname, 'schema_sample2.csv'), { encoding : 'utf8'});
@@ -144,13 +144,13 @@ csvjson.toObject(data, options);
 
 
 ```
-convert csv data to schema json object 
+convert csv data to schema json object
 -----------------------------------------------
 ```javascript
 
 /*
     for creating schema of json object following key can be used in header of csv file:
-    
+
     .   for defining nested json object
     []  for defining data as array (suffix)
         -- can add delimiter in the array (i.e. [;] for delimiter of ;)
@@ -163,7 +163,7 @@ convert csv data to schema json object
 
 /*
     schema_sample.csv
-   
+
     created,contact.name,contact.age+,contact.number+,address[],address[],contact.hobbies[;],-id,friends[0].name,friends[0].phone,friends[1].name,friends[1].phone
     2014-11-12,Pradeep,25,4352436,MG Road,Mumbai,pc games; guitar,5,Jeff,8761234567,Mike,1234567890
     2014-10-06,Arnav,16,7364537,KB Road,Mumbai,pc games; traveling,7,Steve,555555555,Pradeep,4352436
@@ -181,7 +181,7 @@ csvjson.toSchemaObject(data, options)
 
 /*
     returns
-    
+
     [
         {
             "created":"2014-11-12",
@@ -190,7 +190,7 @@ csvjson.toSchemaObject(data, options)
                 age":25,
                 "number":4352436,
                 "hobbies":["pc games","guitar"]
-                
+
             },
             "address":["MG Road","Mumbai"],
             "friends":[
@@ -211,7 +211,7 @@ csvjson.toSchemaObject(data, options)
                 "age":16,
                 "number":7364537,
                 "hobbies":["pc games","traveling"]
-                
+
             },
             "address":["KB Road","Mumbai"],
             "friends":[
@@ -225,7 +225,7 @@ csvjson.toSchemaObject(data, options)
                 }
             ]
         }
-        
+
     ]
 
 
@@ -273,13 +273,13 @@ var options = { delimiter : ','};
 csvjson.toColumnArray(data, options);
 
 /*
-    returns 
+    returns
 
-    { 
+    {
         sr: [ '1', '2', '3' ],
         name: [ 'rocky', 'jacky', 'suzy' ],
         age: [ '33', '22', '21' ],
-        gender: [ 'male', 'male', 'female' ] 
+        gender: [ 'male', 'male', 'female' ]
     }
 
 */
@@ -292,17 +292,17 @@ convert json object to csv data
 
 var data = fs.readFileSync(path.join(__dirname, 'jsoncsv.json'), { encoding : 'utf8'});
 var options = {
-    delimiter   : ",",   
-    wrap        : false 
+    delimiter   : ",",
+    wrap        : false
 }
 
 /* supported options
-    
+
     delimiter = <String> optional default value is ","
     wrap  = <String|Boolean> optional default value is false
     headers = <String> optional supported values are "full", "none", "relative", "key"
     objectDenote = <String> optional default value is "."
-    arrayDenote = <String> optional default value is "[]" 
+    arrayDenote = <String> optional default value is "[]"
 */
 
 
