@@ -2,7 +2,9 @@
 csvjson
 =================
 
-simple csv to json and json to csv converter for node.js and browser.
+Simple CSV to JSON and JSON to CSV converter
+-----------------------------------------
+for Node.js and Browser.
 -------------------------------------
 
 &copy; Pradeep Mishra, Licensed under the MIT-LICENSE
@@ -12,12 +14,12 @@ simple csv to json and json to csv converter for node.js and browser.
 Features
 --------
 
-* csv to json object
-* csv to schema json object
-* csv to array object
-* csv to column array object
-* json object to csv
-* json array to csv
+* CSV to JSON object
+* CSV to schema JSON object
+* CSV to array object
+* CSV to column array object
+* JSON object to CSV
+* JSON array to CSV
 
 
 Warning
@@ -110,9 +112,13 @@ var data = fs.readFileSync(path.join(__dirname, 'schema_sample2.csv'), { encodin
 /*
 {
     delimiter : <String> optional default is ","
+    quote     : <String|Boolean> default is null
 }
 */
-var options = { delimiter : ','};
+var options = {
+  delimiter : ',' // optional
+  quote     : '"' // optional
+};
 csvjson.toObject(data, options);
 
 /*
@@ -174,9 +180,13 @@ var data = fs.readFileSync(path.join(__dirname, 'schema_sample.csv'), { encoding
 /*
 {
     delimiter : <String> optional default is ","
+    quote     : <String|Boolean> default is null
 }
 */
-var options = { delimiter : ','};
+var options = {
+  delimiter : ',' // optional
+  quote     : '"' // optional
+};
 csvjson.toSchemaObject(data, options)
 
 /*
@@ -241,9 +251,13 @@ var data = fs.readFileSync(path.join(__dirname, 'sample.csv'), { encoding : 'utf
 /*
 {
     delimiter : <String> optional default is ","
+    quote     : <String|Boolean> default is null
 }
 */
-var options = { delimiter : ','};
+var options = {
+  delimiter : ',' // optional
+  quote     : '"' // optional
+};
 csvjson.toArray(data, options);
 
 /*
@@ -267,9 +281,13 @@ var data = fs.readFileSync(path.join(__dirname, 'sample.csv'), { encoding : 'utf
 /*
 {
     delimiter : <String> optional default is ","
+    quote     : <String|Boolean> default is null
 }
 */
-var options = { delimiter : ','};
+var options = {
+  delimiter : ',' // optional
+  quote     : '"' // optional
+};
 csvjson.toColumnArray(data, options);
 
 /*

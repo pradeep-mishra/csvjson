@@ -1,7 +1,7 @@
 {
   "name": "csvjson",
   "description": "convert csv to json and json to csv",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "main": "./index.js",
   "author": {
     "name": "Pradeep Mishra"
@@ -20,10 +20,11 @@
     "csvtojson",
     "csv2json",
     "jsoncsv",
+    "jsontocsv",
     "json2csv",
     "csv to json",
     "coloum-array",
-    "schema",
+    "schema json",
     "schema-json",
     "schema-csv",
     "json to csv"

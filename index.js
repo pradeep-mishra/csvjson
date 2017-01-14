@@ -13,6 +13,7 @@ function toColumnArray(data, opts){
     opts = opts || { };
 
     var delimiter   = (opts.delimiter || ',');
+    var quote       = _getQuote(opts.quote);
     var content     = data;
 
     if(typeof(content) !== "string"){
@@ -20,7 +21,10 @@ function toColumnArray(data, opts){
     }
 
     content         = content.split(/[\n\r]+/ig);
-    var headers     = content.shift().split(delimiter);
+    var headers     = quote ?
+                    _convertArray(content.shift(), delimiter, quote) :
+                    content.shift().split(delimiter);
+
     var hashData    = { };
 
     headers.forEach(function(item){
@@ -29,7 +33,9 @@ function toColumnArray(data, opts){
 
     content.forEach(function(item){
         if(item){
-            item = item.split(delimiter);
+            item = quote ?
+                  _convertArray(item, delimiter, quote) :
+                  item.split(delimiter);
             item.forEach(function(val, index){
                 hashData[headers[index]].push(_trimQuote(val));
             });
@@ -44,17 +50,26 @@ function toObject(data, opts){
     opts = opts || { };
 
     var delimiter   = (opts.delimiter || ',');
+    var quote       = _getQuote(opts.quote);
     var content     = data;
+
     if(typeof(content) !== "string"){
         throw new Error("Invalid input, input data should be a string");
     }
+
     content = content.split(/[\n\r]+/ig);
-    var headers = content.shift().split(delimiter),
-        hashData = [];
+
+    var headers = quote ?
+                    _convertArray(content.shift(), delimiter, quote) :
+                    content.shift().split(delimiter);
+    var hashData = [ ];
+
     content.forEach(function(item){
         if(item){
-            item = item.split(delimiter);
-            var hashItem = {};
+          item = quote ?
+                _convertArray(item, delimiter, quote) :
+                item.split(delimiter);
+            var hashItem = { };
             headers.forEach(function(headerItem, index){
                 hashItem[headerItem] = _trimQuote(item[index]);
             });
@@ -69,6 +84,7 @@ function toSchemaObject(data, opts){
     opts = opts || { };
 
     var delimiter   = (opts.delimiter || ',');
+    var quote       = _getQuote(opts.quote);
     var content     = data;
 
     if(typeof(content) !== "string"){
@@ -76,15 +92,19 @@ function toSchemaObject(data, opts){
     }
 
     content         = content.split(/[\n\r]+/ig);
-    var headers     = content.shift().split(delimiter);
+    var headers     = quote ?
+                    _convertArray(content.shift(), delimiter, quote) :
+                    content.shift().split(delimiter);
     var hashData    = [ ];
 
     content.forEach(function(item){
         if(item){
-            item = item.split(delimiter);
+          item = quote ?
+                _convertArray(item, delimiter, quote) :
+                item.split(delimiter);
             var schemaObject = {};
             item.forEach(function(val, index){
-                _putDataInSchema(headers[index], val, schemaObject);
+                _putDataInSchema(headers[index], val, schemaObject , delimiter, quote);
             });
             hashData.push(schemaObject);
         }
@@ -98,6 +118,7 @@ function toArray(data, opts){
     opts = opts || { };
 
     var delimiter   = (opts.delimiter || ',');
+    var quote       = _getQuote(opts.quote);
     var content     = data;
 
     if(typeof(content) !== "string"){
@@ -105,16 +126,29 @@ function toArray(data, opts){
     }
 
     content = content.split(/[\n\r]+/ig);
-    var arrayData = [];
+    var arrayData = [ ];
     content.forEach(function(item){
         if(item){
-            item = item.split(delimiter).map(function(cItem){
+            item = quote ?
+                _convertArray(item, delimiter, quote) :
+                item.split(delimiter);
+
+            item = item.map(function(cItem){
                 return _trimQuote(cItem);
             });
             arrayData.push(item);
         }
     });
     return arrayData;
+}
+
+function _getQuote(q){
+  if(typeof(q) === "string"){
+    return q;
+  }else if(q === true){
+    return '"';
+  }
+  return null;
 }
 
 function _dataType(arg) {
@@ -290,7 +324,7 @@ function _getBigArrayLength(table){
   return len;
 }
 
-function _putDataInSchema(header, item, schema){
+function _putDataInSchema(header, item, schema, delimiter, quote){
     var match = header.match(/\[*[\d]\]\.(\w+)|\.|\[\]|\[(.)\]|-|\+/ig);
     var headerName, currentPoint;
     if(match){
@@ -301,7 +335,7 @@ function _putDataInSchema(header, item, schema){
             var headParts = header.split('.');
             currentPoint = headParts.shift();
             schema[currentPoint] = schema[currentPoint] || {};
-            _putDataInSchema(headParts.join('.'), item, schema[currentPoint]);
+            _putDataInSchema(headParts.join('.'), item, schema[currentPoint], delimiter, quote);
         }else if(match.indexOf('[]') !== -1){
             headerName = header.replace(/\[\]/ig,'');
             if(!schema[headerName]){
@@ -318,7 +352,7 @@ function _putDataInSchema(header, item, schema){
         }else if(/\[(.)\]/.test(testMatch)){
             var delimiter = testMatch.match(/\[(.)\]/).pop();
             headerName = header.replace(/\[(.)\]/ig,'');
-            schema[headerName] = _convertArray(item, delimiter);
+            schema[headerName] = _convertArray(item, delimiter, quote);
         }else if(match.indexOf('+') !== -1){
             headerName = header.replace(/\+/ig,"");
             schema[headerName] = Number(item);
@@ -333,7 +367,10 @@ function _trimQuote(str){
     return str.trim().replace(/^["|'](.*)["|']$/, '$1');
 }
 
-function _convertArray(str, delimiter) {
+function _convertArray(str, delimiter, quote) {
+    if(quote && str.indexOf(quote) !== -1){
+      return _csvToArray(str, delimiter, quote);
+    }
     var output = [];
     var arr = str.split(delimiter);
     arr.forEach(function(val) {
@@ -341,4 +378,35 @@ function _convertArray(str, delimiter) {
         output.push(trimmed);
     });
     return output;
+}
+
+function _csvToArray(text, delimit, quote) {
+
+    delimit = delimit || ",";
+    quote   = quote || '"';
+
+    var validate = new RegExp("^\\s*(?:" +  quote + "[^" +  quote + "\\\\]*(?:\\\\[\\S\\s][^" +  quote + "\\\\]*)*" +  quote + "|[^" +  delimit  +  quote + "\\s\\\\]*(?:\\s+[^" +  delimit  +  quote + "\\s\\\\]+)*)\\s*(?:" +  delimit + "\\s*(?:" +  quote + "[^" +  quote + "\\\\]*(?:\\\\[\\S\\s][^" +  quote + "\\\\]*)*" +  quote + "|[^," +  quote + "\\s\\\\]*(?:\\s+[^" +  delimit +  quote + "\\s\\\\]+)*)\\s*)*$");
+
+    var value = new RegExp("(?!\\s*$)\\s*(?:" +  quote + "([^" +  quote + "\\\\]*(?:\\\\[\\S\\s][^" +  quote + "\\\\]*)*)" +  quote + "|([^" +  delimit  +  quote + "\\s\\\\]*(?:\\s+[^" +  delimit  +  quote + "\\s\\\\]+)*))\\s*(?:" +  delimit + "|$)", "g");
+
+     if (!validate.test(text)){
+        return null;
+    }
+    var a = [ ];
+
+    text.replace(value,
+        function(m0, m1, m2) {
+            if(m1 !== undefined){
+                a.push(m1.replace(/\\'/g, "'"));
+            }else if(m2 !== undefined){
+                a.push(m2);
+            }
+            return '';
+        }
+    );
+
+    if (/,\s*$/.test(text)){
+        a.push('');
+    }
+    return a;
 }
