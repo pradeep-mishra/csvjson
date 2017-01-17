@@ -288,7 +288,7 @@ function _objectToCsv(data, table, parent, row, opt){
 }
 
 function _getHeaders(headerType, table, opt){
-  var keyMatchPattern       = /([\w\s_]+)$/;
+  var keyMatchPattern       = /([\w\s_\[\]]+)$/;
   var relativeMatchPattern  = /\[\]\.?([^\[\]]+)$/;
   switch(headerType){
     case "none":
