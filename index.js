@@ -218,6 +218,7 @@ function toCSV(data, opts){
         replaceNewLinePattern = new RegExp('\n|\r|' + opts.delimiter, 'g');
     }
 
+
     for(var i = 0; i < bigArrayLen; i++){
         row = [ ];
         for(var j = 0; j < keys.length; j++){
@@ -235,7 +236,6 @@ function toCSV(data, opts){
     }
     return csvData;
 }
-
 
 function _toCsv(data, table, parent, row, opt){
     if(_dataType(data) === 'undefined'){
@@ -317,8 +317,8 @@ function _getHeaders(headerType, table, opt){
 function _getBigArrayLength(table){
   var len = 0;
   Object.keys(table).forEach(function(item){
-      if(Array.isArray(table[item]) && item.length > len){
-        len = item.length;
+      if(Array.isArray(table[item]) && table[item].length > len){
+        len = table[item].length;
       }
   });
   return len;
