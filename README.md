@@ -119,6 +119,15 @@ var options = {
   delimiter : ',' // optional
   quote     : '"' // optional
 };
+// for multiple delimiter you can use regex pattern like this /[,|;]+/
+
+/* 
+  for importing headers from different source you can use headers property in options 
+  var options = {
+    headers : "sr,name,age,gender"
+  };
+*/
+
 csvjson.toObject(data, options);
 
 /*
@@ -187,6 +196,16 @@ var options = {
   delimiter : ',' // optional
   quote     : '"' // optional
 };
+
+// for multiple delimiter you can use regex pattern like this /[,|;]+/
+
+/* 
+  for importing headers from different source you can use headers property in options 
+  var options = {
+    headers : "created,contact.name,contact.age+,contact.number+,address[],address[],contact.hobbies[;],-id,friends[0].name,friends[0].phone,friends[1].name,friends[1].phone"
+  };
+*/
+
 csvjson.toSchemaObject(data, options)
 
 /*
@@ -258,6 +277,9 @@ var options = {
   delimiter : ',' // optional
   quote     : '"' // optional
 };
+
+// for multiple delimiter you can use regex pattern like this /[,|;]+/
+
 csvjson.toArray(data, options);
 
 /*
@@ -288,6 +310,16 @@ var options = {
   delimiter : ',' // optional
   quote     : '"' // optional
 };
+
+// for multiple delimiter you can use regex pattern like this /[,|;]+/
+
+/* 
+  for importing headers from different source you can use headers property in options 
+  var options = {
+    headers : "sr,name,age,gender"
+  };
+*/
+
 csvjson.toColumnArray(data, options);
 
 /*

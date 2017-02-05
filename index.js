@@ -15,15 +15,25 @@ function toColumnArray(data, opts){
     var delimiter   = (opts.delimiter || ',');
     var quote       = _getQuote(opts.quote);
     var content     = data;
+    var headers     = null;
 
     if(typeof(content) !== "string"){
         throw new Error("Invalid input, input data should be a string");
     }
 
     content         = content.split(/[\n\r]+/ig);
-    var headers     = quote ?
-                    _convertArray(content.shift(), delimiter, quote) :
-                    content.shift().split(delimiter);
+
+    if(typeof(opts.headers) === "string"){
+        headers = opts.headers.split(/[\n\r]+/ig);
+        headers = quote ?
+                _convertArray(headers.shift(), delimiter, quote) :
+                headers.shift().split(delimiter);    
+    }else{
+        headers = quote ?
+                _convertArray(content.shift(), delimiter, quote) :
+                content.shift().split(delimiter);    
+    }
+    
 
     var hashData    = { };
 
@@ -52,6 +62,7 @@ function toObject(data, opts){
     var delimiter   = (opts.delimiter || ',');
     var quote       = _getQuote(opts.quote);
     var content     = data;
+    var headers     = null;
 
     if(typeof(content) !== "string"){
         throw new Error("Invalid input, input data should be a string");
@@ -59,9 +70,17 @@ function toObject(data, opts){
 
     content = content.split(/[\n\r]+/ig);
 
-    var headers = quote ?
-                    _convertArray(content.shift(), delimiter, quote) :
-                    content.shift().split(delimiter);
+    if(typeof(opts.headers) === "string"){
+        headers = opts.headers.split(/[\n\r]+/ig);
+        headers = quote ?
+                _convertArray(headers.shift(), delimiter, quote) :
+                headers.shift().split(delimiter);    
+    }else{
+        headers = quote ?
+                _convertArray(content.shift(), delimiter, quote) :
+                content.shift().split(delimiter);    
+    }
+
     var hashData = [ ];
 
     content.forEach(function(item){
@@ -86,15 +105,26 @@ function toSchemaObject(data, opts){
     var delimiter   = (opts.delimiter || ',');
     var quote       = _getQuote(opts.quote);
     var content     = data;
-
+    var headers     = null;
     if(typeof(content) !== "string"){
         throw new Error("Invalid input, input should be a string");
     }
 
     content         = content.split(/[\n\r]+/ig);
-    var headers     = quote ?
-                    _convertArray(content.shift(), delimiter, quote) :
-                    content.shift().split(delimiter);
+
+
+    if(typeof(opts.headers) === "string"){
+        headers = opts.headers.split(/[\n\r]+/ig);
+        headers = quote ?
+                _convertArray(headers.shift(), delimiter, quote) :
+                headers.shift().split(delimiter);    
+    }else{
+        headers = quote ?
+                _convertArray(content.shift(), delimiter, quote) :
+                content.shift().split(delimiter);    
+    }
+    
+
     var hashData    = [ ];
 
     content.forEach(function(item){
