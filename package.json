@@ -1,7 +1,7 @@
 {
   "name": "csvjson",
   "description": "convert csv to json and json to csv",
-  "version": "4.1.2",
+  "version": "4.1.3",
   "main": "./index.js",
   "author": {
     "name": "Pradeep Mishra"

@@ -394,7 +394,10 @@ function _putDataInSchema(header, item, schema, delimiter, quote){
 }
 
 function _trimQuote(str){
-    return str.trim().replace(/^["|'](.*)["|']$/, '$1');
+    if(str){
+        return String(str).trim().replace(/^["|'](.*)["|']$/, '$1');   
+    }
+    return "";
 }
 
 function _convertArray(str, delimiter, quote) {
