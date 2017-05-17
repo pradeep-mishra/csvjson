@@ -27,13 +27,13 @@ function toColumnArray(data, opts){
         headers = opts.headers.split(/[\n\r]+/ig);
         headers = quote ?
                 _convertArray(headers.shift(), delimiter, quote) :
-                headers.shift().split(delimiter);    
+                headers.shift().split(delimiter);
     }else{
         headers = quote ?
                 _convertArray(content.shift(), delimiter, quote) :
-                content.shift().split(delimiter);    
+                content.shift().split(delimiter);
     }
-    
+
 
     var hashData    = { };
 
@@ -74,11 +74,11 @@ function toObject(data, opts){
         headers = opts.headers.split(/[\n\r]+/ig);
         headers = quote ?
                 _convertArray(headers.shift(), delimiter, quote) :
-                headers.shift().split(delimiter);    
+                headers.shift().split(delimiter);
     }else{
         headers = quote ?
                 _convertArray(content.shift(), delimiter, quote) :
-                content.shift().split(delimiter);    
+                content.shift().split(delimiter);
     }
 
     var hashData = [ ];
@@ -117,13 +117,13 @@ function toSchemaObject(data, opts){
         headers = opts.headers.split(/[\n\r]+/ig);
         headers = quote ?
                 _convertArray(headers.shift(), delimiter, quote) :
-                headers.shift().split(delimiter);    
+                headers.shift().split(delimiter);
     }else{
         headers = quote ?
                 _convertArray(content.shift(), delimiter, quote) :
-                content.shift().split(delimiter);    
+                content.shift().split(delimiter);
     }
-    
+
 
     var hashData    = [ ];
 
@@ -318,7 +318,7 @@ function _objectToCsv(data, table, parent, row, opt){
 }
 
 function _getHeaders(headerType, table, opt){
-  var keyMatchPattern       = /([\w\s_\[\]]+)$/;
+  var keyMatchPattern       = /([^\[\]\.]+)$/;
   var relativeMatchPattern  = /\[\]\.?([^\[\]]+)$/;
   switch(headerType){
     case "none":
@@ -395,7 +395,7 @@ function _putDataInSchema(header, item, schema, delimiter, quote){
 
 function _trimQuote(str){
     if(str){
-        return String(str).trim().replace(/^["|'](.*)["|']$/, '$1');   
+        return String(str).trim().replace(/^["|'](.*)["|']$/, '$1');
     }
     return "";
 }
