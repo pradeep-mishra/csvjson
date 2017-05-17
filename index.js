@@ -82,17 +82,16 @@ function toObject(data, opts){
     }
 
     var hashData = [ ];
-
     content.forEach(function(item){
         if(item){
           item = quote ?
                 _convertArray(item, delimiter, quote) :
                 item.split(delimiter);
-            var hashItem = { };
-            headers.forEach(function(headerItem, index){
-                hashItem[headerItem] = _trimQuote(item[index]);
-            });
-            hashData.push(hashItem);
+          var hashItem = { };
+          headers.forEach(function(headerItem, index){
+              hashItem[headerItem] = _trimQuote(item[index]);
+          });
+          hashData.push(hashItem);
         }
     });
     return hashData;
@@ -418,13 +417,8 @@ function _csvToArray(text, delimit, quote) {
     delimit = delimit || ",";
     quote   = quote || '"';
 
-    var validate = new RegExp("^\\s*(?:" +  quote + "[^" +  quote + "\\\\]*(?:\\\\[\\S\\s][^" +  quote + "\\\\]*)*" +  quote + "|[^" +  delimit  +  quote + "\\s\\\\]*(?:\\s+[^" +  delimit  +  quote + "\\s\\\\]+)*)\\s*(?:" +  delimit + "\\s*(?:" +  quote + "[^" +  quote + "\\\\]*(?:\\\\[\\S\\s][^" +  quote + "\\\\]*)*" +  quote + "|[^," +  quote + "\\s\\\\]*(?:\\s+[^" +  delimit +  quote + "\\s\\\\]+)*)\\s*)*$");
-
     var value = new RegExp("(?!\\s*$)\\s*(?:" +  quote + "([^" +  quote + "\\\\]*(?:\\\\[\\S\\s][^" +  quote + "\\\\]*)*)" +  quote + "|([^" +  delimit  +  quote + "\\s\\\\]*(?:\\s+[^" +  delimit  +  quote + "\\s\\\\]+)*))\\s*(?:" +  delimit + "|$)", "g");
 
-     if (!validate.test(text)){
-        return null;
-    }
     var a = [ ];
 
     text.replace(value,
