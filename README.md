@@ -116,7 +116,7 @@ var data = fs.readFileSync(path.join(__dirname, 'schema_sample2.csv'), { encodin
 }
 */
 var options = {
-  delimiter : ',' // optional
+  delimiter : ',', // optional
   quote     : '"' // optional
 };
 // for multiple delimiter you can use regex pattern like this /[,|;]+/
@@ -193,7 +193,7 @@ var data = fs.readFileSync(path.join(__dirname, 'schema_sample.csv'), { encoding
 }
 */
 var options = {
-  delimiter : ',' // optional
+  delimiter : ',', // optional
   quote     : '"' // optional
 };
 
@@ -274,7 +274,7 @@ var data = fs.readFileSync(path.join(__dirname, 'sample.csv'), { encoding : 'utf
 }
 */
 var options = {
-  delimiter : ',' // optional
+  delimiter : ',', // optional
   quote     : '"' // optional
 };
 
@@ -307,7 +307,7 @@ var data = fs.readFileSync(path.join(__dirname, 'sample.csv'), { encoding : 'utf
 }
 */
 var options = {
-  delimiter : ',' // optional
+  delimiter : ',', // optional
   quote     : '"' // optional
 };
 

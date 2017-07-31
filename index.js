@@ -21,7 +21,7 @@ function toColumnArray(data, opts){
         throw new Error("Invalid input, input data should be a string");
     }
 
-    content         = content.split(/[\n\r]+/ig);
+    content     = content.split(/[\n\r]+/ig);
 
     if(typeof(opts.headers) === "string"){
         headers = opts.headers.split(/[\n\r]+/ig);

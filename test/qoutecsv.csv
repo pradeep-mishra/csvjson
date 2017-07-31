@@ -1,0 +1,9 @@
+func,name,shortname,caption,variable,predefined,min,max,step,values,type,category,groupCaption,description,notes
+generic,Validation Size,generic,Validation Size,validation_size,0.2,0.1,0.5,0.1,,float,Machine Learning,It's a set of data used to access the strength and utility of a predictive relationship,,
+generic,Seed,generic,Seed,seed,7,1,20,1,,integer,Machine Learning,description,,
+generic,n Fold,generic,n Fold,num_fold,10,2,20,1,,integer,Machine Learning,description,,
+generic,Scoring,generic,Scoring,scoring,accuracy,,,,"accuracy,recall",string,Machine Learning,"A ""score function"" or ""scoring rule"" measures the accuracy of probabilistic predictions",,Per ora l'utente non può selezionare nulla ma in futuro potremmo aggiungere l'opzione di scelta
+LogisticRegression,Logistic Regression,LR,Regularization,lr_regularization,l2,,,,"l1, l2",string,Machine Learning,It's the go-to method for binary classification problems,penalty,
+LogisticRegression,Logistic Regression,LR,C,lr_c,1.0,0.1,10.0,0.1,,float,Machine Learning,It's the go-to method for binary classification problems,C,
+LogisticRegression,Logistic Regression,LR,Solver,lr_solver,liblinear,,,,"newton-cg, lbfgs, liblinear",string,Machine Learning,It's the go-to method for binary classification problems,solver,"Se seleziona lr_regularization = L1 allora il solver = Linear, se seleziona lr_regularization = L2 allora il solver = Linear, Newton-CG, L-BFGS"
+LinearDiscriminantAnalysis,Linear Discriminant Analysis,LDA,Solver,lda_solver,svd,,,,"cvd, lsqr, eingen",string,Machine Learning,It's the go-to linear method for multiclass classification problems,solver,
