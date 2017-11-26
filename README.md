@@ -2,7 +2,7 @@
 csvjson
 =================
 
-Simple CSV to JSON and JSON to CSV converter
+Simple CSV to JSON and JSON to CSV converter with stream support
 -----------------------------------------
 for Node.js and Browser.
 -------------------------------------
@@ -20,11 +20,8 @@ Features
 * CSV to column array object
 * JSON object to CSV
 * JSON array to CSV
+* Stream support
 
-
-Warning
--------
-* csvjson 2x and above has breaking changes and its not compatible with csvjson 1x code.
 
 
 Example usage
@@ -367,7 +364,23 @@ Agatha,Doe,25,21 2nd Street,Las Vegas,NV,10021-3100,dancing;politics
 
 */
 ```
+convert csv to json using stream
+```javascript
 
+var read = fs.createReadStream(path.join(__dirname, 'sample.csv'));
+var write = fs.createWriteStream(path.join(__dirname, 'sample.json'));
+var toObject = csvjson.stream.toObject();
+var stringify = csvjson.stream.stringify();
+read.pipe(toObject)pipe(stringify).pipe(write);
+
+/*
+following functions available for stream transformation
+csvjson.stream.toObject()
+csvjson.stream.toArray()
+csvjson.stream.toColumnArray()
+csvjson.stream.toSchemaObject()
+*/
+```
 ```bash
 npm install csvjson --save
 ```
