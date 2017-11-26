@@ -365,6 +365,7 @@ Agatha,Doe,25,21 2nd Street,Las Vegas,NV,10021-3100,dancing;politics
 */
 ```
 convert csv to json using stream
+-----------------------------------------
 ```javascript
 
 var read = fs.createReadStream(path.join(__dirname, 'sample.csv'));
