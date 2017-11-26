@@ -381,6 +381,12 @@ csvjson.stream.toArray()
 csvjson.stream.toColumnArray()
 csvjson.stream.toSchemaObject()
 */
+
+/*
+csvjson.stream.stringify(<space>)
+stringify function accepts optional space param to format output
+*/
+
 ```
 ```bash
 npm install csvjson --save
