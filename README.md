@@ -383,8 +383,8 @@ csvjson.stream.toSchemaObject()
 */
 
 /*
-csvjson.stream.stringify(<space>)
-stringify function accepts optional space param to format output
+csvjson.stream.stringify([space<number>])
+stringify function accepts optional space parameter to format output
 */
 
 ```
