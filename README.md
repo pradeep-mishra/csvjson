@@ -372,7 +372,7 @@ var read = fs.createReadStream(path.join(__dirname, 'sample.csv'));
 var write = fs.createWriteStream(path.join(__dirname, 'sample.json'));
 var toObject = csvjson.stream.toObject();
 var stringify = csvjson.stream.stringify();
-read.pipe(toObject)pipe(stringify).pipe(write);
+read.pipe(toObject).pipe(stringify).pipe(write);
 
 /*
 following functions available for stream transformation
