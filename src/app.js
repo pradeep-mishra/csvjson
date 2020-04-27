@@ -204,6 +204,7 @@ function toCSV(data, opts){
     if(headers){
       if(opts.wrap){
         headers = headers.map(function(item){
+          item = item.replace(/"/g, '""');
           return opts.wrap + item + opts.wrap;
         });
       }
@@ -226,7 +227,9 @@ function toCSV(data, opts){
             if(csvJSON[keys[j]][i]){
                 csvJSON[keys[j]][i] = csvJSON[keys[j]][i].replace(replaceNewLinePattern, '\t');
                 if(opts.wrap){
-                    csvJSON[keys[j]][i] = opts.wrap + csvJSON[keys[j]][i] + opts.wrap;
+                    var str = csvJSON[keys[j]][i];
+                    str = str.replace(/"/g, '""');
+                    csvJSON[keys[j]][i] = opts.wrap + str + opts.wrap;
                 }
                 row[row.length] = csvJSON[keys[j]][i];
             }else{

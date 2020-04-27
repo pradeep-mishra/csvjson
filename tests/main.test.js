@@ -114,7 +114,35 @@ describe('toCSV', function() {
       expect(result).to.be.an('string');
       done();
   });
-  
+
+  it('should double quote a quote when wrap options set', function(done) {
+    var jsonWithQuote = {
+      "person": [
+        {
+          "firstName": "Jane",
+          "lastName": "Doe",
+          "greeting": "Hello World"
+        },
+        {
+          "firstName": "Agatha",
+          "lastName": "Doe",
+          "greeting": "This is a quote \""
+        }
+      ]
+    };
+    var opts = {
+      wrap: true
+    }
+    var result = csvjson.toCSV(jsonWithQuote, opts);
+    expect(result).to.be.an('string');
+    expect(result).equals(
+			"\".person[].firstName\",\".person[].lastName\",\".person[].greeting\"\n"
+      + "\"Jane\",\"Doe\",\"Hello World\"\n"
+      + "\"Agatha\",\"Doe\",\"This is a quote \"\"\""  // should double quote a quote in CSV string.
+    );
+    done();
+  });
+
 });
 
 
